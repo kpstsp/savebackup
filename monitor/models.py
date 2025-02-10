@@ -3,15 +3,9 @@ from django.db import models
 # Create your models here.
 class Site(models.Model):
     name = models.CharField(max_length=100)
-    # url = models.URLField()
-    # last_backup = models.DateTimeField(null=True, blank=True)
-    # backup_frequency = models.DurationField()
-    # backup_location = models.CharField(max_length=100)
-    # backup_user = models.CharField(max_length=100)
-    # backup_password = models.CharField(max_length=100)
-    # backup_status = models.CharField(max_length=100)
-    # backup_notes = models.TextField(blank=True)
-
+    has_db = models.BooleanField(default=False)
+    files_arch_template = models.CharField(max_length=100, default='{name}_{date}.tar.gz')
+    db_arch_template = models.CharField(max_length=100, default='{name}_{date}.sql')
     def __str__(self):
         return self.name
     

@@ -3,6 +3,19 @@
 {% load dict_extras %}
 
 {% block content %}
+{% if all_sites %}
+    <h2>Sites</h2>
+    <ul>
+      {% for s in all_sites %}
+         <li>
+           {{ s.name }} 
+           [ <a href="{% url 'site_edit' s.pk %}">Edit</a> ]
+         </li>
+      {% endfor %}
+    </ul>
+{% endif %}
+<a href="{% url 'site_create' %}">Create new site</a>
+
 <h1>
     <a href="{% url 'calendar' prev_year prev_month %}">&laquo; Prev</a>
     {{ month_name }} {{ year }}
