@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Site(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     has_db = models.BooleanField(default=False)
     files_arch_template = models.CharField(max_length=100, default='{name}_{date}.tar.gz')
     db_arch_template = models.CharField(max_length=100, default='{name}_{date}.sql')

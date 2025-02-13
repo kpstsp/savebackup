@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Sites</h2>
+  <ul>
+    {% for site in sites %}
+      <li>{{ site.name }} [ <a href="{% url 'site_edit' site.pk %}">Edit</a> ]</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'site_create' %}">Create new site</a>
+{% endblock %}

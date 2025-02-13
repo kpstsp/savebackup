@@ -100,7 +100,7 @@ def site_create_view(request):
         form = SiteForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('site_list')  # Update to your preferred redirect
+            return redirect('calendar')  # Redirect to the calendar view
     else:
         form = SiteForm()
     return render(request, 'monitor/site_form.html', {'form': form})
@@ -116,3 +116,8 @@ def site_update_view(request, pk):
     else:
         form = SiteForm(instance=site_obj)
     return render(request, 'monitor/site_form.html', {'form': form})
+
+@login_required
+def site_list_view(request):
+    sites = Site.objects.all()
+    return render(request, 'monitor/site_list.html', {'sites': sites})
