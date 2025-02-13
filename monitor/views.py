@@ -58,17 +58,19 @@ def calendar_view(request, year=None, month=None):
         return backup_dates
 
     # Get the backup dates for db and www
-    db_dates = get_backup_dates(base_backup_dir / 'db') 
-    www_dates = get_backup_dates(base_backup_dir / 'www')
+    backup_dates = get_backup_dates(base_backup_dir) 
+    
 
+    # print(month_cal)
     # Create a dictionary to hold information about each date
     date_info = {}
+
     for week in month_cal:
         for date in week:
             date_str = date.isoformat()
             date_info[date_str] = {
-                'has_db': date in db_dates,
-                'has_www': date in www_dates,
+                'has_db': date in backup_dates,
+                'has_www': date in backup_dates,
             }
 
     # List of day names to display in the calendar header
