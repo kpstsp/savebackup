@@ -30,6 +30,14 @@ def calendar_view(request, year=None, month=None):
     # Create a calendar object
     cal = calendar.Calendar(firstweekday=0)  # Week starts on Monday (0)
     month_cal = cal.monthdatescalendar(year, month)  # List of weeks in the month
+    
+    #DDEBUG
+    # for i in month_cal:
+    #     print(i)
+    #     print("\n")
+
+    
+    
 
     # Function to get backup dates from a directory
     def get_backup_dates(directory):

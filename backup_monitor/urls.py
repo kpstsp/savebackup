@@ -15,8 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
 from monitor import views as monitor_views
+
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,3 +29,9 @@ urlpatterns = [
     path('', monitor_views.calendar_view, name='calendar'),
     path('', include('monitor.urls')),  # Include all monitor URL patterns
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ] + urlpatterns

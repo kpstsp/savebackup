@@ -33,7 +33,7 @@ LOGIN_URL = 'login'  # URL to redirect to for login
 LOGIN_REDIRECT_URL = 'calendar'  # URL to redirect to after login
 LOGOUT_REDIRECT_URL = 'login'  # URL to redirect to after logout
 
-BASE_BACKUP_DIR = '/backups/'   # Adjust the path as needed
+BASE_BACKUP_DIR = '/backups/files/'   # Adjust the path as needed
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "debug_toolbar",
     'monitor',
 ]
 
@@ -56,6 +57,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 ROOT_URLCONF = 'backup_monitor.urls'
