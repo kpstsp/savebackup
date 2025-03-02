@@ -3,96 +3,151 @@
 {% load dict_extras %}
 
 {% block content %}
-{% if all_sites %}
-    <h2>Sites</h2>
-    <ul>
-      {% for s in all_sites %}
-         <li>
-           {{ s.name }} 
-           [ <a href="{% url 'site_edit' s.pk %}">Edit</a> ]
-         </li>
-      {% endfor %}
-    </ul>
-{% endif %}
-<a href="{% url 'site_create' %}">Create new site</a>
+<div class="sites-section">
+    {% if all_sites %}
+        <h2>Sites</h2>
+        <ul class="sites-list">
+          {% for s in all_sites %}
+             <li>
+               {{ s.name }} 
+               [ <a href="{% url 'site_edit' s.pk %}">Edit</a> ]
+             </li>
+          {% endfor %}
+        </ul>
+    {% endif %}
+    <a href="{% url 'site_create' %}" class="button">Create new site</a>
+</div>
 
-<h1>
-    <a href="{% url 'calendar' prev_year prev_month %}">&laquo; Prev</a>
-    {{ month_name }} {{ year }}
-    <a href="{% url 'calendar' next_year next_month %}">Next &raquo;</a>
-</h1>
+<div class="calendar-header">
+    <a href="{% url 'calendar' prev_year prev_month %}" class="nav-button">&laquo; Prev</a>
+    <h1>{{ month_name }} {{ year }}</h1>
+    <a href="{% url 'calendar' next_year next_month %}" class="nav-button">Next &raquo;</a>
+</div>
 
-<table border="1">
-    <tr>
-        {% for day_name in day_names %}
-            <th>{{ day_name }}</th>
-        {% endfor %}
-    </tr>
-    {% for week in month_cal %}
+<table class="calendar">
+    <thead>
         <tr>
-            {% for date in week %}
-                <td{% if date == today %} class="today"{% elif date.month != month %} class="other-month"{% endif %}>
-                    <div>{{ date.day }}</div>
-                    {% with date_str=date|date:"Y-m-d" %}
-                        {% if date_str in date_info %}
-                            {% with info=date_info|get_item:date_str %}
-                                {% if info.has_db %}
-                                    <span class="db">d</span>
-                                {% endif %}
-                                {% if info.has_www %}
-                                    <span class="www">w</span>
-                                {% endif %}
-                                {% if not info.has_db %}
-                                    {% if not info.has_www %}
-
-                                    <span class="alert"> NO BACKUP </span>
-                                {% endif %}
-                                {% endif %}
-                            {% endwith %}
-                        
-                        {% endif %}
-                    {% endwith %}
-                </td>
+            {% for day_name in day_names %}
+                <th>{{ day_name }}</th>
             {% endfor %}
         </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+        {% for week in month_cal %}
+            <tr>
+                {% for date in week %}
+                    <td{% if date == today %} class="today"{% elif date.month != month %} class="other-month"{% endif %}>
+                        <div class="date">{{ date.day }}</div>
+                        {% with date_str=date|date:"Y-m-d" %}
+                            {% if date_str in date_info %}
+                                {% with info=date_info|get_item:date_str %}
+                                    {% if info.full_backup %}
+                                        <span class="db">FULL BACKUP</span>
+                                    {% endif %}
+                                    {% if info.partial %}
+                                        <span class="www">P</span>
+                                    {% endif %}
+                                    {% if not info.full_backup and not info.partial %}
+                                        <span class="alert">NO BACKUP</span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
 <style>
-    .db {
-        color: blue;
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
     }
-    .www {
-        color: green;
+    .sites-section {
+        margin-bottom: 20px;
     }
-    .alert {
-        color: red;
-        background-color: yellow;
+    .sites-list {
+        list-style-type: none;
+        padding: 0;
     }
-    .other-month {
+    .sites-list li {
+        margin-bottom: 10px;
+    }
+    .button {
+        display: inline-block;
+        background-color: #2196F3;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+    .button:hover {
+        background-color: #1976D2;
+    }
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .calendar-header h1 {
+        margin: 0;
+    }
+    .nav-button {
+        background-color: #2196F3;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+    .nav-button:hover {
+        background-color: #1976D2;
+    }
+    .calendar {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .calendar th, .calendar td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        vertical-align: top;
+    }
+    .calendar th {
+        background-color: #2196F3;
+        color: white;
+    }
+    .calendar td {
+        background-color: white;
+    }
+    .calendar .today {
+        background-color: #ffeb3b;
+    }
+    .calendar .other-month {
         background-color: #f0f0f0;
         color: #999;
     }
-    .today {
-        background-color: #ffeb3b;
+    .calendar .db {
+        color: blue;
+        font-weight: bold;
     }
-    td {
-        width: 100px;
-        height: 80px;
-        vertical-align: top;
+    .calendar .www {
+        color: green;
+        font-weight: bold;
     }
-    table {
-        border-collapse: collapse;
-        width: 100%;
+    .calendar .alert {
+        color: #c94141;
+        background-color: #ffff002e;
+        font-weight: bold;
     }
-    th {
-        background-color: #2196F3;
-        color: white;
-        padding: 5px;
-    }
-    td {
-        border: 1px solid #ccc;
-        padding: 5px;
+    .date {
+        font-size: 1.2em;
+        margin-bottom: 5px;
     }
 </style>
 

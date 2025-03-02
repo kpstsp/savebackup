@@ -69,8 +69,8 @@ def calendar_view(request, year=None, month=None):
         for date in week:
             date_str = date.isoformat()
             date_info[date_str] = {
-                'has_db': date in backup_dates,
-                'has_www': date in backup_dates,
+                'full_backup': date in backup_dates,
+                # 'partial': date in backup_dates,
             }
 
     # List of day names to display in the calendar header
