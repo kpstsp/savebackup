@@ -7,6 +7,7 @@ from django.conf import settings
 from pathlib import Path
 import datetime
 import calendar
+import os
 from .forms import SiteForm
 from .models import Site
 
@@ -131,3 +132,75 @@ def site_update_view(request, pk):
 def site_list_view(request):
     sites = Site.objects.all()
     return render(request, 'monitor/site_list.html', {'sites': sites})
+
+from django.shortcuts import render
+from django.conf import settings
+from pathlib import Path
+
+def backup_info_view(request, date):
+    print("Debug of DATE:")
+    print(date)
+    backup_data = get_backup_data(date)
+    return render(request, 'monitor/backup_info.html', {'backup_data': backup_data})
+
+def get_backup_data(date):
+    backup_dir = Path(settings.BASE_BACKUP_DIR) / date / 'backups'
+    backup_data = {
+        'date': date,
+        'databases': [],
+        'sites': [],
+        'other_files': [],
+        'total_size': 0
+    }
+
+    if backup_dir.exists() and backup_dir.is_dir():
+        # Check database backups
+        db_dir = backup_dir / 'db'
+        if db_dir.exists() and db_dir.is_dir():
+            for file_path in db_dir.iterdir():
+                if file_path.is_file() and file_path.suffix == '.sql':
+                    file_stats = file_path.stat()
+                    file_info = {
+                        'name': file_path.name,
+                        'size': file_stats.st_size,
+                        'size_mb': round(file_stats.st_size / (1024 * 1024), 2),
+                        'modified_time': datetime.datetime.fromtimestamp(file_stats.st_mtime),
+                        'path': str(file_path.relative_to(backup_dir))
+                    }
+                    backup_data['total_size'] += file_stats.st_size
+                    backup_data['databases'].append(file_info)
+
+        # Check website backups
+        www_dir = backup_dir / 'www'
+        if www_dir.exists() and www_dir.is_dir():
+            for file_path in www_dir.iterdir():
+                if file_path.is_file() and file_path.suffix in ['.gz', '.zip', '.tar']:
+                    file_stats = file_path.stat()
+                    file_info = {
+                        'name': file_path.name,
+                        'size': file_stats.st_size,
+                        'size_mb': round(file_stats.st_size / (1024 * 1024), 2),
+                        'modified_time': datetime.datetime.fromtimestamp(file_stats.st_mtime),
+                        'path': str(file_path.relative_to(backup_dir))
+                    }
+                    backup_data['total_size'] += file_stats.st_size
+                    backup_data['sites'].append(file_info)
+
+        # Check for any other files in the backup directory
+        for file_path in backup_dir.glob('**/*'):
+            if file_path.is_file() and file_path.parent not in [db_dir, www_dir]:
+                file_stats = file_path.stat()
+                file_info = {
+                    'name': file_path.name,
+                    'size': file_stats.st_size,
+                    'size_mb': round(file_stats.st_size / (1024 * 1024), 2),
+                    'modified_time': datetime.datetime.fromtimestamp(file_stats.st_mtime),
+                    'path': str(file_path.relative_to(backup_dir))
+                }
+                backup_data['total_size'] += file_stats.st_size
+                backup_data['other_files'].append(file_info)
+
+    # Convert total size to MB
+    backup_data['total_size_mb'] = round(backup_data['total_size'] / (1024 * 1024), 2)
+    
+    return backup_data

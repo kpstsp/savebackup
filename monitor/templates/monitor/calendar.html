@@ -42,7 +42,7 @@
                             {% if date_str in date_info %}
                                 {% with info=date_info|get_item:date_str %}
                                     {% if info.full_backup %}
-                                        <span class="db">FULL BACKUP</span>
+                                        <a href="{% url 'backup_info' date_str %}" class="db">FULL BACKUP</a>
                                     {% endif %}
                                     {% if info.partial %}
                                         <span class="www">P</span>

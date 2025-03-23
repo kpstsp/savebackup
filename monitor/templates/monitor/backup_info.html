@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Backup Information for {{ backup_data.date }}</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Overview</h5>
+            <p class="card-text">Total Backup Size: {{ backup_data.total_size_mb }} MB</p>
+        </div>
+    </div>
+
+    {% if backup_data.databases %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Database Backups</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Last Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for db in backup_data.databases %}
+                        <tr>
+                            <td>{{ db.name }}</td>
+                            <td>{{ db.size_mb }} MB</td>
+                            <td>{{ db.modified_time|date:"Y-m-d H:i:s" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if backup_data.sites %}
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Site Backups</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Last Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for site in backup_data.sites %}
+                        <tr>
+                            <td>{{ site.name }}</td>
+                            <td>{{ site.size_mb }} MB</td>
+                            <td>{{ site.modified_time|date:"Y-m-d H:i:s" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if backup_data.other_files %}
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Other Files</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Last Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in backup_data.other_files %}
+                        <tr>
+                            <td>{{ file.name }}</td>
+                            <td>{{ file.size_mb }} MB</td>
+                            <td>{{ file.modified_time|date:"Y-m-d H:i:s" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not backup_data.databases and not backup_data.sites and not backup_data.other_files %}
+    <div class="alert alert-info">
+        No backup files found for this date.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
