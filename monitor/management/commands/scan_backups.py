@@ -8,7 +8,8 @@ from collections import defaultdict
 class Command(BaseCommand):
     help = 'Scan backups and update the database'
 
-    def collect_backups(self, directory, is_db=False):
+    @staticmethod
+    def collect_backups(directory, is_db=False):
         backups = []
         directory = Path(directory)
         if directory.exists() and directory.is_dir():
@@ -30,7 +31,8 @@ class Command(BaseCommand):
                         continue
         return backups
 
-    def merge_backups(self, db_backups, www_backups):
+    @staticmethod
+    def merge_backups(db_backups, www_backups):
         all_backups = defaultdict(dict)
         for backup in db_backups + www_backups:
             key = (backup['site_name'], backup['date'])
