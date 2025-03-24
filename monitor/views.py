@@ -7,7 +7,6 @@ from django.conf import settings
 from pathlib import Path
 import datetime
 import calendar
-import os
 from .forms import SiteForm
 from .models import Site
 
